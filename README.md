@@ -1,75 +1,180 @@
-# React + TypeScript + Vite
+# 월급 배분 가이드
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+사회초년생이 월 실수령액과 필수지출, 현재 비상금, 투자 성향을 입력하면 CMA 비상금과 ISA 장기 투자금의 월 배분안을 확인할 수 있는 교육용 웹 서비스입니다.
 
-Currently, two official plugins are available:
+단순한 비율을 제시하는 대신 비상금 목표, 배분 근거, 36개월 예상 결과와 세금 차이를 함께 보여주는 것을 목표로 합니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+> 이 프로젝트는 금융상품 가입이나 투자를 권유하지 않습니다. 계산 결과는 공개된 세제 정보와 교육용 가정을 사용한 시뮬레이션이며 실제 수익과 세금은 상품, 수수료, 거래 시점, 세법 및 금융회사 약관에 따라 달라질 수 있습니다.
 
-## React Compiler
+## 현재 구현 상태
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+첫 번째 작업인 금융 계산 코어가 완료되었습니다.
 
-## Expanding the ESLint configuration
+- 월 가용액과 비상금 목표 계산
+- CMA 우선 배정과 ISA 잔여 배정
+- ISA 연간 납입한도 경고
+- 투자 성향별 36개월 적립식 시뮬레이션
+- 일반계좌와 ISA의 동일 과세 대상 수익 세금 비교
+- ISA 유형 미선택 시 일반형 기준의 보수적 계산
+- 금융 상수, 기준일, 출처의 중앙 관리
+- 핵심 계산과 경계값 단위 테스트 25개
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+입력 폼, 결과 카드, 차트 등 사용자 화면은 다음 작업에서 구현할 예정입니다. 현재 `App.tsx`에는 Vite 시작 화면이 남아 있습니다.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+첫 번째 작업의 자세한 내용은 [계산 코어 작업 기록](./docs/01-calculation-core.md)에서 확인할 수 있습니다.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## MVP 범위
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 포함
 
+- 월 실수령액, 월 필수지출, 현재 비상금 입력
+- 안정형, 중립형, 적극형 투자 성향
+- 일반형, 서민형, 모름 ISA 유형
+- CMA·ISA 월 배분안
+- 36개월 월별 원금과 예상 평가액
+- 일반계좌와 ISA의 예상 세금 및 절세액
+- 계산 가정, 기준일, 출처 및 제한사항 표시
+
+### 제외
+
+- 회원가입과 로그인
+- 데이터베이스와 결과 저장
+- 실제 금융상품 또는 종목 추천
+- 실시간 금리와 시세 조회
+- 금융회사 계좌 연결
+- 실제 ISA 잔여 납입한도 조회
+- Spring Boot API
+
+## 핵심 배분 규칙
+
+```text
+월 가용액 = max(월 실수령액 - 월 필수지출, 0)
+
+비상금 목표 = 월 필수지출 × 3
+비상금 부족액 = max(비상금 목표 - 현재 비상금, 0)
+
+월 CMA 필요액 = ceil(비상금 부족액 ÷ 12)
+월 CMA 배정액 = min(월 가용액, 월 CMA 필요액)
+월 ISA 배정액 = 월 가용액 - 월 CMA 배정액
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+비상금 목표 계산에서는 예상 CMA 이자를 미리 차감하지 않습니다. 비상금을 12개월 안에 우선적으로 채우면서도 가용액이 남으면 ISA 투자를 병행하도록 설계했습니다.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 예시
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| 항목 | 금액 |
+| --- | ---: |
+| 월 실수령액 | 3,000,000원 |
+| 월 필수지출 | 1,500,000원 |
+| 현재 비상금 | 1,000,000원 |
+| 비상금 목표 | 4,500,000원 |
+| 월 CMA 배정액 | 291,667원 |
+| 월 ISA 배정액 | 1,208,333원 |
 
+## 세금 비교 규칙
+
+- ISA 월 배정액을 36개월 동안 매월 말 납입한다고 가정합니다.
+- 연 수익률은 유효 월 수익률로 변환합니다.
+- 일반계좌와 ISA는 같은 납입액과 같은 세전 수익률을 사용합니다.
+- 평가액이 원금보다 작으면 과세 대상 수익을 0원으로 처리합니다.
+- 일반계좌는 비교 가능한 과세 대상 수익에 15.4% 세율을 적용합니다.
+- ISA는 유형별 비과세 한도를 제외한 초과 순수익에 9.9%를 적용합니다.
+- ISA 유형이 `unknown`이면 일반형 비과세 한도를 사용하고 경고를 반환합니다.
+- 국내 상장주식 매매차익처럼 일반계좌에서도 비과세일 수 있는 수익은 비교 대상으로 가정하지 않습니다.
+
+기본 교육용 수익률 시나리오는 안정형 2%, 중립형 5%, 적극형 8%입니다. 특정 상품의 수익률 전망이나 보장 수익률이 아닙니다.
+
+## 기술 구성
+
+- React 19
+- TypeScript 6
+- Vite 8
+- Vitest 5
+- ESLint 10
+
+## 프로젝트 구조
+
+```text
+src/
+├── domain/
+│   ├── assumptions.ts                # 금융 가정, 기준일, 출처
+│   ├── calculateAllocation.ts        # CMA·ISA 월 배분 계산
+│   ├── calculateAllocation.test.ts   # 배분 경계값 테스트
+│   ├── calculateTaxComparison.ts     # 36개월 시뮬레이션과 세금 비교
+│   ├── calculateTaxComparison.test.ts
+│   ├── index.ts                      # 도메인 공개 API
+│   ├── types.ts                      # 입출력·경고 타입
+│   └── validation.ts                 # 금액·수익률 입력 검증
+├── App.tsx
+└── main.tsx
 ```
+
+## 로컬 실행
+
+### 요구 환경
+
+- Node.js `^20.19.0` 또는 `>=22.12.0`
+- npm
+
+### 설치 및 실행
+
+```bash
+npm install
+npm run dev
+```
+
+Vite가 출력한 로컬 주소를 브라우저에서 엽니다.
+
+## 명령어
+
+| 명령어 | 설명 |
+| --- | --- |
+| `npm run dev` | 개발 서버 실행 |
+| `npm test` | 전체 단위 테스트 1회 실행 |
+| `npm run test:watch` | 파일 변경을 감시하며 테스트 실행 |
+| `npm run lint` | ESLint 검사 |
+| `npm run build` | TypeScript 검사와 프로덕션 빌드 |
+| `npm run preview` | 빌드 결과 로컬 미리보기 |
+
+## 금융 가정 관리
+
+금융 관련 값은 [`src/domain/assumptions.ts`](./src/domain/assumptions.ts)에 집중시켰습니다. 각 항목은 값뿐 아니라 다음 메타데이터를 함께 가집니다.
+
+- 법적 기준 또는 교육용 가정 여부
+- 확인 기준일
+- 출처 URL
+- 계산상 제한사항
+
+2026년 9월 23일 확인 기준 기본 출처:
+
+- [국가법령정보센터 - ISA 비과세 한도](https://law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1031850453)
+- [기획재정부 - ISA 연간 납입한도와 이월](https://whatsnew.moef.go.kr/mec/ots/dif/view.do?comBaseCd=DIFGODEPRT&difGovDepart1=DIFGODR001&difSer=c514effc-c831-4eb1-94c7-6eab084dcac8&temp=2021&temp2=HALF001)
+- [KB증권 - ISA 비과세 한도와 분리과세율](https://www.kbsec.com/go.able?linkcd=m05080009)
+
+법령과 금융회사 약관은 변경될 수 있으므로 서비스 배포 전 기준일과 출처를 다시 확인해야 합니다.
+
+## 테스트 원칙
+
+단위 테스트는 다음 위험을 우선 검증합니다.
+
+- 필수지출이 실수령액보다 큰 경우
+- 비상금 목표 달성·초과·미달 상태
+- 월 납입액과 수익률이 0인 경우
+- 손실 시 과세 대상 수익이 발생하지 않는지
+- ISA 일반형·서민형 비과세 한도 직전과 직후
+- ISA 유형 미선택 시 일반형 기본값 적용
+- ISA 예상 연간 배정액의 기본 납입한도 초과
+- 음수, 소수, `NaN` 등 잘못된 금액 입력
+
+## 향후 작업
+
+1. 입력 폼과 유효성 오류 메시지 구현
+2. 배분 결과 카드와 계산 근거 표시
+3. 36개월 시계열 및 세금 비교 차트 구현
+4. 모바일 360px, 키보드 탐색, 색 대비 검수
+5. 면책 문구와 출처 UI 연결
+6. 배포 및 실제 사용자 흐름 검증
+
+## 라이선스
+
+현재 별도 라이선스가 지정되어 있지 않습니다.
