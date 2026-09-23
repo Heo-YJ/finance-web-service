@@ -1,4 +1,4 @@
-export { DEFAULT_ASSUMPTIONS } from './assumptions'
+export { DEFAULT_ASSUMPTIONS, PRODUCT_GUIDE_SOURCES } from './assumptions'
 export { calculateAllocation } from './calculateAllocation'
 export {
   calculateTaxAmounts,

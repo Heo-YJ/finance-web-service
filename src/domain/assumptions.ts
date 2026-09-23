@@ -8,6 +8,24 @@ const ISA_TAX_SOURCE = 'https://www.kbsec.com/go.able?linkcd=m05080009'
 const ISA_CONTRIBUTION_SOURCE =
   'https://whatsnew.moef.go.kr/mec/ots/dif/view.do?comBaseCd=DIFGODEPRT&difGovDepart1=DIFGODR001&difSer=c514effc-c831-4eb1-94c7-6eab084dcac8&temp=2021&temp2=HALF001'
 
+export const PRODUCT_GUIDE_SOURCES = {
+  cma: {
+    label: '금융투자협회 CMA 모범규준',
+    url: 'https://law.kofia.or.kr/service/law/lawFullScreenContent.do?historySeq=1172&seq=285',
+    asOf: VERIFIED_AS_OF,
+  },
+  depositProtection: {
+    label: '금융위원회 예금보호 안내',
+    url: 'https://www.fsc.go.kr/po020201/84975',
+    asOf: VERIFIED_AS_OF,
+  },
+  isa: {
+    label: '국가법령정보센터 ISA 세제 기준',
+    url: ISA_LAW_SOURCE,
+    asOf: VERIFIED_AS_OF,
+  },
+} as const
+
 export const DEFAULT_ASSUMPTIONS: SimulationAssumptions = {
   simulationMonths: 36,
   emergencyFundMonths: 3,

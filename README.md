@@ -22,10 +22,12 @@
 - 배분 결과 카드, 비상금 진행률, 월급 배분 막대
 - 36개월 원금·예상 평가액 SVG 차트
 - 일반계좌·ISA 세금 비교 시각화
+- CMA와 ISA의 역할, 우선순위 및 주의사항 안내
+- RP형·MMF형·MMW형 CMA 비교와 예금자보호 안내
 - 반응형 360px 모바일 레이아웃과 키보드 포커스
 - 핵심 계산과 UI 스모크 테스트 26개
 
-작업별 자세한 내용은 [계산 코어 작업 기록](./docs/01-calculation-core.md)과 [사용자 화면 작업 기록](./docs/02-user-interface.md)에서 확인할 수 있습니다.
+작업별 자세한 내용은 [계산 코어 작업 기록](./docs/01-calculation-core.md), [사용자 화면 작업 기록](./docs/02-user-interface.md), [CMA·ISA 안내 작업 기록](./docs/03-cma-isa-guide.md)에서 확인할 수 있습니다.
 
 ## MVP 범위
 

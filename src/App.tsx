@@ -1,6 +1,7 @@
 import { useRef, useState, type FormEvent } from 'react'
 import {
   DEFAULT_ASSUMPTIONS,
+  PRODUCT_GUIDE_SOURCES,
   calculateAllocation,
   calculateTaxComparison,
   type AllocationResult,
@@ -340,6 +341,7 @@ function App() {
         </a>
         <nav aria-label="주요 메뉴">
           <a href="#calculator">계산하기</a>
+          <a href="#account-guide">CMA·ISA 알아보기</a>
           <a href="#assumptions">기준과 출처</a>
         </nav>
       </header>
@@ -354,7 +356,7 @@ function App() {
             </h1>
             <p className="hero-description">
               비상금은 부족하지 않게, 투자는 미루지 않게. 현재 상황을 입력하면
-              CMA와 ISA의 월 배분 근거를 한눈에 보여드려요.
+              CMA 등 현금성 자산과 ISA의 월 배분 근거를 한눈에 보여드려요.
             </p>
             <div className="hero-points" aria-label="서비스 특징">
               <span><b>01</b> 실수령액 기준</span>
@@ -504,7 +506,7 @@ function App() {
                 <p>먼저 확보할 생활비</p>
               </article>
               <article className="allocation-card cma">
-                <div className="card-topline"><span className="card-dot" />CMA</div>
+                <div className="card-topline"><span className="card-dot" />비상금 · CMA 등</div>
                 <strong>{formatWon(allocation.allocation.cma)}</strong>
                 <p>비상금 목표를 위한 월 적립</p>
               </article>
@@ -523,14 +525,14 @@ function App() {
                 </div>
                 <strong>{formatWon(result.input.monthlyNetIncome)}</strong>
               </div>
-              <div className="allocation-bar" aria-label="필수지출, CMA, ISA 월급 배분 비율">
+              <div className="allocation-bar" aria-label="필수지출, 비상금용 CMA 등, ISA 월급 배분 비율">
                 <span className="essential" style={{ width: `${essentialRatio}%` }} />
                 <span className="cma" style={{ width: `${cmaRatio}%` }} />
                 <span className="isa" style={{ width: `${isaRatio}%` }} />
               </div>
               <div className="allocation-legend">
                 <span><i className="essential" />필수지출 {Math.round(essentialRatio)}%</span>
-                <span><i className="cma" />CMA {Math.round(cmaRatio)}%</span>
+                <span><i className="cma" />비상금 {Math.round(cmaRatio)}%</span>
                 <span><i className="isa" />ISA {Math.round(isaRatio)}%</span>
               </div>
             </article>
@@ -617,7 +619,138 @@ function App() {
                 수수료와 해외 원천징수, 상품별 과세 차이는 반영하지 않았어요.
               </p>
             </article>
+
+            <a className="account-guide-link" href="#account-guide">
+              CMA와 ISA가 낯설다면 차이부터 확인해 보세요
+              <span aria-hidden="true">↓</span>
+            </a>
           </section>
+        </section>
+
+        <section className="account-guide-section" id="account-guide">
+          <div className="section-heading account-guide-heading">
+            <span className="step-number">?</span>
+            <div>
+              <p className="section-kicker">계좌 역할 이해하기</p>
+              <h2>CMA와 ISA, 목적이 달라요</h2>
+              <p>
+                둘 다 해야 하는 것은 아니에요. 지금 필요한 돈과 오래 굴릴 돈을
+                구분하기 위한 선택지입니다.
+              </p>
+            </div>
+          </div>
+
+          <div className="account-comparison-grid">
+            <article className="account-explainer cma-explainer">
+              <div className="account-explainer-heading">
+                <span className="account-icon" aria-hidden="true">C</span>
+                <div>
+                  <h3>CMA</h3>
+                  <p>잠깐 세워두는 자금</p>
+                </div>
+              </div>
+              <p className="account-description">
+                계좌의 현금을 RP·MMF·MMW 같은 단기 금융상품에 자동으로
+                운용하는 자금관리 서비스예요.
+              </p>
+              <div className="account-use-case">
+                <strong>이럴 때</strong>
+                <span>비상금이나 월급 대기자금처럼 곧 꺼내 쓸 돈</span>
+              </div>
+              <p className="account-caution">
+                수시입출금이 편리하지만 수익 계산 방식, 손실 가능성,
+                예금자보호 여부가 유형별로 달라요.
+              </p>
+            </article>
+
+            <article className="account-explainer isa-explainer">
+              <div className="account-explainer-heading">
+                <span className="account-icon" aria-hidden="true">I</span>
+                <div>
+                  <h3>ISA</h3>
+                  <p>오래 굴리는 절세 바구니</p>
+                </div>
+              </div>
+              <p className="account-description">
+                예금·펀드·ETF 등을 한 계좌에서 운용하고, 일정 요건을 충족하면
+                수익에 대한 세제 혜택을 받을 수 있는 계좌예요.
+              </p>
+              <div className="account-use-case">
+                <strong>이럴 때</strong>
+                <span>3년 이상 운용할 수 있는 중장기 투자자금</span>
+              </div>
+              <p className="account-caution">
+                가입 유형에 따라 담을 수 있는 상품이 다르고, 선택한 상품에 따라
+                원금 손실이 날 수 있어요.
+              </p>
+            </article>
+          </div>
+
+          <div className="account-answer">
+            <strong>그래서 둘 다 해야 하나요?</strong>
+            <p>
+              아니요. 비상금이 부족하다면 CMA를 포함한 현금성 자산을 먼저
+              확보하고, 생활비와 비상금을 제외한 여유자금이 생겼을 때 ISA를
+              검토하면 돼요.
+            </p>
+          </div>
+
+          <details className="cma-types">
+            <summary>
+              <span>
+                <strong>CMA 유형도 알아볼까요?</strong>
+                <small>RP형·MMF형·MMW형의 차이</small>
+              </span>
+              <span className="details-toggle" aria-hidden="true">+</span>
+            </summary>
+            <div className="cma-type-grid">
+              <article>
+                <span className="type-label">RP형</span>
+                <strong>환매조건부채권에 투자</strong>
+                <p>증권사가 정한 약정 수익률을 적용해 상대적으로 이해하기 쉬워요.</p>
+                <small>예금자보호 대상 아님 · 증권사 신용위험 확인</small>
+              </article>
+              <article>
+                <span className="type-label">MMF형</span>
+                <strong>단기 채권형 펀드에 투자</strong>
+                <p>국공채와 우량 단기금융상품의 운용 실적에 따라 수익이 달라져요.</p>
+                <small>예금자보호 대상 아님 · 원금 손실 가능</small>
+              </article>
+              <article>
+                <span className="type-label">MMW형</span>
+                <strong>랩계약으로 단기자산 운용</strong>
+                <p>주로 증권금융 예수금 등 단기자산에 운용하고 실적을 배분해요.</p>
+                <small>예금자보호 대상 아님 · 보수와 조건 확인</small>
+              </article>
+              <article>
+                <span className="type-label">참고 · 종금형</span>
+                <strong>보호 여부가 다른 예외 유형</strong>
+                <p>보호 대상 상품이면 한 금융회사에서 원금과 소정의 이자를 합해 1억원까지 보호될 수 있어요.</p>
+                <small>취급 금융회사가 제한적이므로 가입 전 보호 여부 확인</small>
+              </article>
+            </div>
+            <p className="cma-type-note">
+              같은 유형도 금융회사마다 수익률, 자동투자 시간, 출금 조건이 달라요.
+              특정 유형이 항상 더 좋다는 뜻은 아니며 가입 전 상품설명서를 확인해야 합니다.
+            </p>
+          </details>
+
+          <div className="account-guide-sources" aria-label="CMA와 ISA 설명 출처">
+            <span>확인일 {PRODUCT_GUIDE_SOURCES.cma.asOf}</span>
+            <a href={PRODUCT_GUIDE_SOURCES.cma.url} target="_blank" rel="noreferrer">
+              {PRODUCT_GUIDE_SOURCES.cma.label} <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              href={PRODUCT_GUIDE_SOURCES.depositProtection.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {PRODUCT_GUIDE_SOURCES.depositProtection.label} <span aria-hidden="true">↗</span>
+            </a>
+            <a href={PRODUCT_GUIDE_SOURCES.isa.url} target="_blank" rel="noreferrer">
+              {PRODUCT_GUIDE_SOURCES.isa.label} <span aria-hidden="true">↗</span>
+            </a>
+          </div>
         </section>
 
         <section className="assumptions-section" id="assumptions">
