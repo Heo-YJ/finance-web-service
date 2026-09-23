@@ -349,14 +349,14 @@ function App() {
       <main>
         <section className="hero-section" id="top">
           <div className="hero-copy">
-            <p className="eyebrow"><span /> 사회초년생을 위한 3분 월급 가이드</p>
+            <p className="eyebrow"><span /> 사회초년생을 위한 3분 월급 저축 가이드</p>
             <h1>
               이번 달 월급,
               <br />얼마를 남기고 어디에 넣을까요?
             </h1>
             <p className="hero-description">
               비상금은 부족하지 않게, 투자는 미루지 않게. 현재 상황을 입력하면
-              CMA 등 현금성 자산과 ISA의 월 배분 근거를 한눈에 보여드려요.
+              CMA와 같은 현금성 자산과 ISA의 월 배분 근거를 한눈에 보여드려요.
             </p>
             <div className="hero-points" aria-label="서비스 특징">
               <span><b>01</b> 실수령액 기준</span>
